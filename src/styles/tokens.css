@@ -1,0 +1,85 @@
+/* Color & type tokens shared by all screens — see DESIGN-SYSTEM.md */
+:root {
+  /* Brand */
+  --color-primary: #4456ff;
+  --color-primary-ink: #ffffff;
+  --color-secondary: #ffc94a;
+  --color-secondary-ink: #241f3d;
+  --color-accent: #ff6f5e;
+  --color-accent-ink: #241f3d;
+  --color-mint: #05c793;
+
+  /* Surface */
+  --color-bg: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef0f8;
+  --color-border: #dde1f0;
+  --color-ink: #241f3d;
+  --color-ink-soft: #6b6584;
+
+  /* Semantic (state) — intentionally separate from brand accent */
+  --color-success: #0e9f6e;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  /* Typography */
+  --font-display: "Baloo 2", ui-rounded, "Segoe UI", sans-serif;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  /* App-screen surface effects (Admin/Tutor/Student) */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --shadow-sm: 0 1px 2px rgba(36, 31, 61, 0.06), 0 2px 8px rgba(36, 31, 61, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #8b97ff;
+    --color-primary-ink: #1c1832;
+    --color-secondary: #ffd873;
+    --color-secondary-ink: #241f3d;
+    --color-accent: #ff9686;
+    --color-accent-ink: #241f3d;
+    --color-mint: #3fe7bc;
+
+    --color-bg: #17152b;
+    --color-surface: #221e3d;
+    --color-surface-muted: #2a2648;
+    --color-border: #372f5c;
+    --color-ink: #f3efff;
+    --color-ink-soft: #b7add9;
+
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-danger: #f87171;
+    --color-info: #60a5fa;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-primary: #8b97ff;
+  --color-primary-ink: #1c1832;
+  --color-secondary: #ffd873;
+  --color-secondary-ink: #241f3d;
+  --color-accent: #ff9686;
+  --color-accent-ink: #241f3d;
+  --color-mint: #3fe7bc;
+
+  --color-bg: #17152b;
+  --color-surface: #221e3d;
+  --color-surface-muted: #2a2648;
+  --color-border: #372f5c;
+  --color-ink: #f3efff;
+  --color-ink-soft: #b7add9;
+
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
