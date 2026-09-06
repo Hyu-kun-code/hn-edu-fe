@@ -203,7 +203,11 @@
 /* ===== Hero ===== */
 .landing-page .hero{padding:64px 0 40px;}
 .landing-page .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center;}
-@media (max-width:900px){ .landing-page .hero-grid{grid-template-columns:1fr;} }
+@media (max-width:900px){
+  .landing-page .hero-grid{grid-template-columns:1fr;}
+  .landing-page .hero-stage{min-height:0;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding-top:8px;}
+  .landing-page .badge-card,.landing-page .streak-card{position:static;transform:none!important;}
+}
 .landing-page .hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.08;letter-spacing:-0.5px;margin:14px 0 18px;}
 .landing-page .hero p.lead{font-size:18px;color:var(--ink-soft);max-width:52ch;margin-bottom:28px;}
 .landing-page .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;}
