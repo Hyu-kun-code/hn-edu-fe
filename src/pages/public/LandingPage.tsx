@@ -98,7 +98,7 @@ export function LandingPage() {
                 </a>
               </div>
             </div>
-
+`
             <div className="hero-stage" aria-hidden="true">
               <div className="badge-card clay clay--a b1 float">
                 <span className="level">Movers</span>
