@@ -53,7 +53,7 @@ export function LoginPage() {
               <path d="M20 6.5C20 5.7 19.3 5 18.5 5H12V19H18.5C19.3 19 20 18.3 20 17.5V6.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
             </svg>
           </span>
-          <span className="auth-brand-name">EduConnect</span>
+          <span className="auth-brand-name">HNEdu</span>
         </Link>
 
         <h1>Đăng nhập</h1>

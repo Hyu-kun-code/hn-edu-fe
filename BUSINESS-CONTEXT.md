@@ -1,9 +1,9 @@
-# BUSINESS CONTEXT — EduConnect
+# BUSINESS CONTEXT — HNEdu
 ## Hệ thống quản lý Trung tâm Tiếng Anh
 
 ## 1. Bài toán nghiệp vụ
 
-Một trung tâm Anh ngữ quản lý học viên, gia sư, lịch dạy, học phí hiện đang làm thủ công (Excel, Zalo group), gây khó khăn trong việc theo dõi tiến độ học tập, tính lương, và thu học phí. Hệ thống **EduConnect** số hoá toàn bộ quy trình vận hành của **một trung tâm Anh ngữ nội bộ** (không phải marketplace mở cho gia sư tự do đăng ký công khai), đồng thời bổ sung module Quiz tự động chấm điểm và chatbot AI hỗ trợ học viên luyện tiếng Anh ngoài giờ học chính.
+Một trung tâm Anh ngữ quản lý học viên, gia sư, lịch dạy, học phí hiện đang làm thủ công (Excel, Zalo group), gây khó khăn trong việc theo dõi tiến độ học tập, tính lương, và thu học phí. Hệ thống **HNEdu** số hoá toàn bộ quy trình vận hành của **một trung tâm Anh ngữ nội bộ** (không phải marketplace mở cho gia sư tự do đăng ký công khai), đồng thời bổ sung module Quiz tự động chấm điểm và chatbot AI hỗ trợ học viên luyện tiếng Anh ngoài giờ học chính.
 
 ## 2. Đối tượng sử dụng (Actor)
 

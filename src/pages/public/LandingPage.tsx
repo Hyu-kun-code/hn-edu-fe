@@ -5,7 +5,7 @@ import "./LandingPage.css";
 export function LandingPage() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(() => {
     try {
-      return localStorage.getItem("educonnect-theme") as "light" | "dark" | null;
+      return localStorage.getItem("hnedu-theme") as "light" | "dark" | null;
     } catch {
       return null;
     }
@@ -21,7 +21,7 @@ export function LandingPage() {
     const next = isDark ? "light" : "dark";
     setTheme(next);
     try {
-      localStorage.setItem("educonnect-theme", next);
+      localStorage.setItem("hnedu-theme", next);
     } catch {
       // localStorage unavailable — theme just won't persist
     }
@@ -43,7 +43,7 @@ export function LandingPage() {
                 <path d="M20 6.5C20 5.7 19.3 5 18.5 5H12V19H18.5C19.3 19 20 18.3 20 17.5V6.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
               </svg>
             </span>
-            EduConnect
+            HNEdu
           </div>
           <nav className="nav-links">
             <a href="#courses">Khoá học</a>
@@ -80,7 +80,7 @@ export function LandingPage() {
         <section className="hero">
           <div className="wrap hero-grid">
             <div>
-              <p className="eyebrow">Trung tâm Anh ngữ EduConnect</p>
+              <p className="eyebrow">Trung tâm Anh ngữ HNEdu</p>
               <h1>Học tiếng Anh vui như giờ ra chơi, tiến bộ rõ từng tuần</h1>
               <p className="lead">
                 Từ bé học Cambridge Starters đến người đi làm luyện IELTS 7.0 — một lộ trình rõ ràng, gia sư được duyệt kỹ, và
@@ -447,7 +447,7 @@ export function LandingPage() {
 
       <footer>
         <div className="wrap foot-row">
-          <span>© EduConnect — Trung tâm Anh ngữ nội bộ, không phải marketplace mở.</span>
+          <span>© HNEdu — Trung tâm Anh ngữ nội bộ, không phải marketplace mở.</span>
           <span>
             <Link to="/register">Đăng ký</Link> · <Link to="/login">Đăng nhập</Link>
           </span>

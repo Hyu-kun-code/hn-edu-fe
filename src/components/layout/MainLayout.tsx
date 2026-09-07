@@ -7,7 +7,7 @@ export function MainLayout() {
   return (
     <div className="main-layout">
       <header className="main-layout__header">
-        <span>EduConnect</span>
+        <span>HNEdu</span>
         {user && (
           <nav>
             <span>{user.fullName} ({user.role})</span>

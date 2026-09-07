@@ -1,6 +1,6 @@
-# EduConnect — Design System (Color Rules)
+# HNEdu — Design System (Color Rules)
 
-Quy tắc màu dùng chung cho **toàn bộ 19 màn hình** (Auth, Admin, Gia sư, Học viên) của EduConnect. Dựa trên khuyến nghị của skill `ui-ux-pro-max` (domain `color` + `style` cho "education admin dashboard" và "data-dense dashboard"), kết hợp với brand color đã dùng ở landing page marketing để giữ nhất quán thương hiệu.
+Quy tắc màu dùng chung cho **toàn bộ 19 màn hình** (Auth, Admin, Gia sư, Học viên) của HNEdu. Dựa trên khuyến nghị của skill `ui-ux-pro-max` (domain `color` + `style` cho "education admin dashboard" và "data-dense dashboard"), kết hợp với brand color đã dùng ở landing page marketing để giữ nhất quán thương hiệu.
 
 > Nguồn: `python scripts/search.py "admin dashboard data table dense management panel" --domain style` và `--domain color "education platform"` (ui-ux-pro-max skill).
 
