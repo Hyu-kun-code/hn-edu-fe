@@ -1,0 +1,204 @@
+.time-picker {
+  position: relative;
+}
+
+.time-picker-field {
+  position: relative;
+  display: flex;
+}
+
+.time-picker .time-picker-input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  padding: 9px 60px 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.time-picker-input::placeholder {
+  color: var(--color-ink-soft);
+  font-family: var(--font-body);
+}
+
+.time-picker-input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.time-picker-icon-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.time-picker-clear-btn {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-surface-muted);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.time-picker-field:hover .time-picker-clear-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.time-picker-clear-btn:hover {
+  background: var(--color-border);
+  color: var(--color-ink);
+}
+
+/* Material 3 time-picker dialog */
+
+.time-picker-popover {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 280px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+}
+
+.time-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.time-picker-header-segment {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-surface-muted);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.time-picker-header-segment--active {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+.time-picker-header-sep {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  padding: 0 2px;
+}
+
+.time-picker-dial {
+  display: block;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 16px;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.time-picker-dial-face {
+  fill: var(--color-surface-muted);
+}
+
+.time-picker-dial-cell {
+  fill: transparent;
+  transition: fill 120ms ease;
+}
+
+.time-picker-dial-cell--selected {
+  fill: var(--color-primary);
+}
+
+.time-picker-dial-label {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  fill: var(--color-ink);
+  pointer-events: none;
+  user-select: none;
+}
+
+.time-picker-dial-label--minor {
+  font-size: 13px;
+  fill: var(--color-ink-soft);
+}
+
+.time-picker-dial-label--selected {
+  fill: var(--color-primary-ink);
+  font-weight: 700;
+}
+
+.time-picker-dial-hand {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.time-picker-dial-center {
+  fill: var(--color-primary);
+}
+
+.time-picker-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.time-picker-btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13.5px;
+  border: none;
+  cursor: pointer;
+  padding: 9px 18px;
+}
+
+.time-picker-btn--text {
+  background: transparent;
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.time-picker-btn--filled {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-radius: 999px;
+}

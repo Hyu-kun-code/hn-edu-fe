@@ -25,7 +25,7 @@ Field `classes.level_type` (YLE / SCHOOL / CERTIFICATE) + `level_detail` (text t
 
 ### ✅ Trong phạm vi (Core — bắt buộc, 27 yêu cầu chức năng)
 - **Người dùng & Phân quyền:** đăng ký/đăng nhập 3 role (Admin/Gia sư/Học viên), RBAC, quản lý hồ sơ, Admin duyệt/khoá gia sư
-- **Lớp học & Lịch dạy:** tạo lớp theo trình độ tiếng Anh, xếp lịch chống trùng, đăng ký lớp, nhắc lịch, huỷ/dời lịch
+- **Lớp học & Lịch dạy:** tạo lớp theo trình độ tiếng Anh, xếp lịch chống trùng, đăng ký lớp, nhắc lịch, huỷ/dời lịch. Gia sư có thể tự đề xuất lịch dạy cho lớp mình phụ trách, nhưng buổi học chỉ chính thức sau khi Admin duyệt (xem mục 5.8)
 - **Học phí:** ghi nhận thanh toán, công nợ, tính lương gia sư theo giờ dạy, báo cáo thu-chi
 - **Quiz:** soạn đề trắc nghiệm (phân loại GRAMMAR/VOCABULARY/READING), làm bài, tự động chấm điểm, thống kê kết quả theo câu/theo lớp
 - **Chatbot AI:** hỏi-đáp tự do hỗ trợ luyện tiếng Anh (ngữ pháp, từ vựng, cách dùng câu), lưu lịch sử hội thoại, hiển thị nội dung có cấu trúc (bảng chia động từ, ví dụ câu)
@@ -49,6 +49,23 @@ Field `classes.level_type` (YLE / SCHOOL / CERTIFICATE) + `level_detail` (text t
 5. **Tính lương gia sư**: dựa trên tổng số giờ dạy từ các buổi học có trạng thái `COMPLETED` trong bảng `schedules`, nhân với `hourly_rate` trong `tutor_profiles`.
 6. **Phụ huynh có thể không có tài khoản riêng cho con nhỏ** (bảng `parent_student_links` cho phép `student_user_id` để trống nếu học viên chưa có tài khoản, chỉ lưu tên).
 7. **Phân loại lớp theo 2 nhóm đối tượng**: dùng `classes.level_type` (YLE/SCHOOL/CERTIFICATE) để phân biệt trẻ em/học sinh phổ thông và người luyện chứng chỉ — không tạo bảng riêng cho từng nhóm.
+8. **Lịch dạy do Gia sư đề xuất phải qua Admin duyệt; lịch do Admin xếp trực tiếp thì có hiệu lực ngay**: hai luồng tạo lịch dùng chung bảng `schedules` nhưng khác trạng thái khởi tạo.
+   - Admin xếp lịch trực tiếp cho lớp → buổi học vào thẳng trạng thái `SCHEDULED`.
+   - Gia sư gửi yêu cầu xếp lịch cho lớp mình dạy → buổi học ở trạng thái `PENDING_APPROVAL`, chưa xuất hiện trong "Lịch dạy sắp tới" cho tới khi Admin duyệt (`SCHEDULED`) hoặc từ chối (`REJECTED`).
+   - `schedules.status` gồm 5 giá trị: `PENDING_APPROVAL`, `SCHEDULED`, `COMPLETED`, `CANCELLED`, `REJECTED`.
+   - Chỉ Admin mới được dời lịch (`SCHEDULED` → dời), huỷ lịch, hoặc duyệt/từ chối yêu cầu `PENDING_APPROVAL`. Đánh dấu hoàn thành buổi học (`SCHEDULED` → `COMPLETED`) thì cả Admin lẫn Gia sư đang dạy lớp đó đều thực hiện được (vì Gia sư là người trực tiếp đứng lớp, biết rõ buổi học đã diễn ra hay chưa).
+9. **Học liệu (`course_documents`) đính kèm lớp hoặc buổi học, không phải cả hai**: mỗi bản ghi bắt buộc có đúng 1 trong 2 giá trị `class_id` hoặc `schedule_id` (ràng buộc CHECK trong DB), thể hiện bằng 2 nhóm endpoint riêng: `/api/classes/{id}/documents/*` và `/api/schedules/{id}/documents/*`.
+    - **Loại file nhận**: PDF, ảnh (jpg/jpeg/png/gif/webp), MP3 — upload trực tiếp, lưu file vật lý trên server (không object storage). Video **chỉ nhận dạng link** (Youtube, Google Drive,...) lưu vào `external_url`, không upload file video lên server.
+    - **Giới hạn dung lượng**: tối đa 20MB/file (`spring.servlet.multipart.max-file-size`), vượt quá sẽ bị từ chối ngay ở tầng HTTP trước khi vào Controller.
+    - **Cấu trúc thư mục lưu trên server** (gốc cấu hình qua `app.upload.dir`, mặc định `uploads/`):
+      ```
+      /uploads
+        /class-documents/{classId}/{documents|images|audio}/
+        /schedule-documents/{scheduleId}/{documents|images|audio}/
+      ```
+      Loại file quyết định thư mục con: PDF → `documents/`, ảnh → `images/`, MP3 → `audio/`. Tên file lưu trên đĩa là UUID (tránh trùng/ký tự lạ), tên gốc do người dùng đặt được giữ lại trong cột `file_name` để hiển thị.
+    - **Quyền upload/xoá**: Admin, hoặc Gia sư đang dạy đúng lớp đó (giống quyền soạn Quiz). **Quyền xem**: Admin, Gia sư của lớp, hoặc Học viên đã đăng ký lớp (dùng chung `hasClassAccess` với module Lớp học/Lịch dạy/Quiz).
+    - Lưu trực tiếp trên đĩa server đồng nghĩa **không bền vững nếu server chạy trên hạ tầng container ephemeral** (VD Railway) — file sẽ mất khi container restart/redeploy trừ khi gắn volume lâu dài. Chấp nhận rủi ro này trong phạm vi đồ án.
 
 ## 6. Tech stack
 

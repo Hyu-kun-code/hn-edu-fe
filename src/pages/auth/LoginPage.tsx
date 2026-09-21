@@ -1,9 +1,10 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { authService } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
 import { ROLES } from "../../utils/constants";
+import { BrandMark } from "../../components/common/BrandMark";
 import "./LoginPage.css";
 
 const ROLE_HOME_PATH: Record<string, string> = {
@@ -15,8 +16,10 @@ const ROLE_HOME_PATH: Record<string, string> = {
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const registered = Boolean((location.state as { registered?: boolean } | null)?.registered);
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,14 +31,17 @@ export function LoginPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      const { user, token } = await authService.login({ email, password });
-      login(user, token);
-      navigate(ROLE_HOME_PATH[user.role] ?? "/", { replace: true });
+      const auth = await authService.login({ username, password });
+      login(
+        { id: auth.userId, username: auth.username, fullName: auth.fullName, role: auth.role },
+        auth.token
+      );
+      navigate(ROLE_HOME_PATH[auth.role] ?? "/", { replace: true });
     } catch (err) {
       const message = isAxiosError(err)
         ? (err.response?.data as { message?: string } | undefined)?.message
         : undefined;
-      setError(message ?? "Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
+      setError(message ?? "Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.");
       // Move focus to the error so keyboard/screen-reader users notice it immediately.
       requestAnimationFrame(() => errorRef.current?.focus());
     } finally {
@@ -46,29 +52,27 @@ export function LoginPage() {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <Link to="/" className="auth-brand">
-          <span className="auth-brand-mark" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M4 6.5C4 5.7 4.7 5 5.5 5H12V19H5.5C4.7 19 4 18.3 4 17.5V6.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-              <path d="M20 6.5C20 5.7 19.3 5 18.5 5H12V19H18.5C19.3 19 20 18.3 20 17.5V6.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span className="auth-brand-name">HNEdu</span>
-        </Link>
+        <BrandMark />
 
         <h1>Đăng nhập</h1>
         <p className="auth-subtitle">Đăng nhập để tiếp tục vào lớp học, Quiz và bảng điểm của bạn.</p>
 
+        {registered && (
+          <div className="auth-success" role="status">
+            Đăng ký thành công. Vui lòng đăng nhập.
+          </div>
+        )}
+
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-username">Tên đăng nhập</label>
             <input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              placeholder="ban@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="login-username"
+              type="text"
+              autoComplete="username"
+              placeholder="Tên đăng nhập"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

@@ -17,31 +17,8 @@
   padding: 36px 32px;
 }
 
-.auth-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.auth-card .app-brand {
   margin-bottom: 28px;
-  text-decoration: none;
-}
-
-.auth-brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--color-primary);
-  color: var(--color-primary-ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-
-.auth-brand-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--color-ink);
 }
 
 .auth-card h1 {
@@ -83,7 +60,19 @@
   color: var(--color-ink);
 }
 
-.auth-field input:focus-visible {
+.auth-field select {
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.auth-field input:focus-visible,
+.auth-field select:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
@@ -117,6 +106,16 @@
 .auth-password-toggle:hover {
   background: var(--color-surface-muted);
   color: var(--color-ink);
+}
+
+.auth-success {
+  margin-bottom: 20px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+  font-size: 13.5px;
+  line-height: 1.4;
 }
 
 .auth-error {
