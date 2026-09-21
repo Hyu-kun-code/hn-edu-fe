@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import { classService } from "../../services/classService";
 import { adminUserService } from "../../services/adminUserService";
 import type { ClassEntity, CreateClassPayload, LevelType } from "../../types/class.types";
@@ -36,6 +38,8 @@ const emptyForm = {
 };
 
 export function ClassManagementPage() {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [classes, setClasses] = useState<ClassEntity[]>([]);
   const [tutors, setTutors] = useState<AdminUserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,6 +130,7 @@ export function ClassManagementPage() {
       }
       setIsFormOpen(false);
       await loadData();
+      showToast(editingId ? "Đã cập nhật lớp học." : "Đã tạo lớp học mới.");
     } catch (err) {
       setFormError(getErrorMessage(err, "Lưu lớp học thất bại. Vui lòng thử lại."));
     } finally {
@@ -134,11 +139,18 @@ export function ClassManagementPage() {
   }
 
   async function handleClose(id: number) {
+    const ok = await confirm({
+      message: "Đóng lớp học này? Học viên sẽ không thể đăng ký thêm và hành động này không thể hoàn tác.",
+      confirmText: "Đóng lớp",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingActionId(id);
     try {
       await classService.closeClass(id);
       await loadData();
+      showToast("Đã đóng lớp học.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Đóng lớp thất bại. Vui lòng thử lại."));
     } finally {

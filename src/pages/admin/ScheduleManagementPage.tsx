@@ -5,6 +5,8 @@ import { scheduleService } from "../../services/scheduleService";
 import { DatePicker } from "../../components/common/DatePicker";
 import { TimePicker } from "../../components/common/TimePicker";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import type { Schedule, SchedulePayload } from "../../types/class.types";
 import { formatDate, formatTime, toIsoDate } from "../../utils/format";
 
@@ -31,6 +33,8 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function ScheduleManagementPage() {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Schedule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +95,7 @@ export function ScheduleManagementPage() {
       await scheduleService.reschedule(editingId, payload);
       setEditingId(null);
       await loadData();
+      showToast("Đã dời lịch dạy.");
     } catch (err) {
       setFormError(getErrorMessage(err, "Dời lịch thất bại. Vui lòng thử lại."));
     } finally {
@@ -99,11 +104,18 @@ export function ScheduleManagementPage() {
   }
 
   async function handleCancel(scheduleId: number) {
+    const ok = await confirm({
+      message: "Huỷ buổi dạy này? Hành động không thể hoàn tác.",
+      confirmText: "Huỷ lịch",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingActionId(scheduleId);
     try {
       await scheduleService.cancel(scheduleId);
       await loadData();
+      showToast("Đã huỷ lịch dạy.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Huỷ lịch thất bại. Vui lòng thử lại."));
     } finally {
@@ -117,6 +129,7 @@ export function ScheduleManagementPage() {
     try {
       await scheduleService.complete(scheduleId);
       await loadData();
+      showToast("Đã đánh dấu buổi học hoàn thành.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Đánh dấu hoàn thành thất bại. Vui lòng thử lại."));
     } finally {
@@ -130,6 +143,7 @@ export function ScheduleManagementPage() {
     try {
       await scheduleService.approve(scheduleId);
       await loadData();
+      showToast("Đã duyệt lịch dạy.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Duyệt lịch dạy thất bại. Vui lòng thử lại."));
     } finally {
@@ -138,11 +152,18 @@ export function ScheduleManagementPage() {
   }
 
   async function handleReject(scheduleId: number) {
+    const ok = await confirm({
+      message: "Từ chối yêu cầu xếp lịch này?",
+      confirmText: "Từ chối",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingActionId(scheduleId);
     try {
       await scheduleService.reject(scheduleId);
       await loadData();
+      showToast("Đã từ chối lịch dạy.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Từ chối lịch dạy thất bại. Vui lòng thử lại."));
     } finally {

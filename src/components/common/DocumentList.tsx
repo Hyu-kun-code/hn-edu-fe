@@ -3,6 +3,8 @@ import { isAxiosError } from "axios";
 import { documentService } from "../../services/documentService";
 import { DocumentPreviewModal } from "./DocumentPreviewModal";
 import { LoadingIndicator } from "./LoadingIndicator";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import type { CourseDocument, DocumentFileType } from "../../types/document.types";
 import { formatDateTime } from "../../utils/format";
 import { toYoutubeEmbedUrl } from "../../utils/youtube";
@@ -56,6 +58,8 @@ function AudioPlayerItem({ id }: { id: number }) {
 }
 
 export function DocumentList({ classId, scheduleId, canManage }: DocumentListProps) {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [documents, setDocuments] = useState<CourseDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -106,6 +110,7 @@ export function DocumentList({ classId, scheduleId, canManage }: DocumentListPro
       if (classId !== undefined) await documentService.uploadForClass(classId, file);
       else await documentService.uploadForSchedule(scheduleId as number, file);
       await loadData();
+      showToast("Đã tải học liệu lên thành công.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Tải học liệu lên thất bại. Vui lòng thử lại."));
     } finally {
@@ -123,6 +128,7 @@ export function DocumentList({ classId, scheduleId, canManage }: DocumentListPro
       else await documentService.addVideoLinkForSchedule(scheduleId as number, payload);
       setLinkForm({ fileName: "", url: "" });
       await loadData();
+      showToast("Đã thêm link video.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Thêm link video thất bại. Vui lòng thử lại."));
     } finally {
@@ -131,12 +137,18 @@ export function DocumentList({ classId, scheduleId, canManage }: DocumentListPro
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm("Xoá học liệu này? Hành động không thể hoàn tác.")) return;
+    const ok = await confirm({
+      message: "Xoá học liệu này? Hành động không thể hoàn tác.",
+      confirmText: "Xoá",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingDeleteId(id);
     try {
       await documentService.deleteDocument(id);
       await loadData();
+      showToast("Đã xoá học liệu.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Xoá học liệu thất bại. Vui lòng thử lại."));
     } finally {

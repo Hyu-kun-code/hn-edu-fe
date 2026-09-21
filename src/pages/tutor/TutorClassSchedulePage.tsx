@@ -8,6 +8,7 @@ import { TimePicker } from "../../components/common/TimePicker";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
 import { DocumentList } from "../../components/common/DocumentList";
 import { Modal } from "../../components/common/Modal";
+import { useToast } from "../../hooks/useToast";
 import type { ClassEntity, Schedule, SchedulePayload, ScheduleStatus } from "../../types/class.types";
 import { formatCurrency, formatDate, formatTime } from "../../utils/format";
 
@@ -36,6 +37,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 const emptyForm = { sessionDate: "", startTime: "", endTime: "", note: "" };
 
 export function TutorClassSchedulePage() {
+  const { showToast } = useToast();
   const { id } = useParams<{ id: string }>();
   const classId = Number(id);
 
@@ -78,6 +80,7 @@ export function TutorClassSchedulePage() {
     try {
       await scheduleService.complete(scheduleId);
       await loadData();
+      showToast("Đã đánh dấu buổi học hoàn thành.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Đánh dấu hoàn thành thất bại. Vui lòng thử lại."));
     } finally {
@@ -107,6 +110,7 @@ export function TutorClassSchedulePage() {
       await scheduleService.requestSchedule(classId, payload);
       setIsFormOpen(false);
       await loadData();
+      showToast("Đã gửi yêu cầu xếp lịch, chờ Admin duyệt.");
     } catch (err) {
       setFormError(getErrorMessage(err, "Gửi yêu cầu xếp lịch thất bại. Vui lòng thử lại."));
     } finally {

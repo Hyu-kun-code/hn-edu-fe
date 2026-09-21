@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import { adminUserService } from "../../services/adminUserService";
 import type { AdminUserResponse, UserStatus } from "../../types/user.types";
 import { formatDateTime } from "../../utils/format";
@@ -32,6 +34,8 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function TutorManagementPage() {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [users, setUsers] = useState<AdminUserResponse[]>([]);
   const [pendingTutors, setPendingTutors] = useState<AdminUserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,17 +63,32 @@ export function TutorManagementPage() {
     loadData();
   }, [loadData]);
 
-  async function runAction(id: number, action: (id: number) => Promise<AdminUserResponse>) {
+  async function runAction(
+    id: number,
+    action: (id: number) => Promise<AdminUserResponse>,
+    successMessage: string,
+  ) {
     setActionError(null);
     setPendingActionId(id);
     try {
       await action(id);
       await loadData();
+      showToast(successMessage);
     } catch (err) {
       setActionError(getErrorMessage(err, "Thao tác thất bại. Vui lòng thử lại."));
     } finally {
       setPendingActionId(null);
     }
+  }
+
+  async function handleLock(id: number) {
+    const ok = await confirm({
+      message: "Khoá tài khoản gia sư này? Họ sẽ không thể đăng nhập cho tới khi được mở khoá lại.",
+      confirmText: "Khoá",
+      danger: true,
+    });
+    if (!ok) return;
+    await runAction(id, adminUserService.lock, "Đã khoá tài khoản.");
   }
 
   if (isLoading) {
@@ -125,7 +144,7 @@ export function TutorManagementPage() {
                           type="button"
                           className="admin-btn admin-btn--success"
                           disabled={pendingActionId === tutor.id}
-                          onClick={() => runAction(tutor.id, adminUserService.approve)}
+                          onClick={() => runAction(tutor.id, adminUserService.approve, "Đã duyệt gia sư.")}
                         >
                           Duyệt
                         </button>
@@ -133,7 +152,7 @@ export function TutorManagementPage() {
                           type="button"
                           className="admin-btn admin-btn--danger"
                           disabled={pendingActionId === tutor.id}
-                          onClick={() => runAction(tutor.id, adminUserService.reject)}
+                          onClick={() => runAction(tutor.id, adminUserService.reject, "Đã từ chối gia sư.")}
                         >
                           Từ chối
                         </button>
@@ -181,7 +200,7 @@ export function TutorManagementPage() {
                           type="button"
                           className="admin-btn admin-btn--success"
                           disabled={pendingActionId === u.id}
-                          onClick={() => runAction(u.id, adminUserService.unlock)}
+                          onClick={() => runAction(u.id, adminUserService.unlock, "Đã mở khoá tài khoản.")}
                         >
                           Mở khoá
                         </button>
@@ -190,7 +209,7 @@ export function TutorManagementPage() {
                           type="button"
                           className="admin-btn admin-btn--danger"
                           disabled={pendingActionId === u.id || u.status === "PENDING"}
-                          onClick={() => runAction(u.id, adminUserService.lock)}
+                          onClick={() => handleLock(u.id)}
                         >
                           Khoá
                         </button>

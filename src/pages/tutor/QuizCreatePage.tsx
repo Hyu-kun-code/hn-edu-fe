@@ -5,6 +5,8 @@ import { quizService } from "../../services/quizService";
 import { DatePicker } from "../../components/common/DatePicker";
 import { TimePicker } from "../../components/common/TimePicker";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import type { ClassEntity } from "../../types/class.types";
 import type { Quiz, QuizPayload, QuizSkillType } from "../../types/quiz.types";
 import { formatDateTime, toIsoDateTime } from "../../utils/format";
@@ -51,6 +53,8 @@ const emptyForm = {
 };
 
 export function QuizCreatePage() {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [classes, setClasses] = useState<ClassEntity[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -220,6 +224,7 @@ export function QuizCreatePage() {
       }
       setIsFormOpen(false);
       await loadQuizzes(selectedClassId);
+      showToast(editingId ? "Đã cập nhật quiz." : "Đã tạo quiz mới.");
     } catch (err) {
       setFormError(getErrorMessage(err, "Lưu quiz thất bại. Vui lòng thử lại."));
     } finally {
@@ -229,12 +234,18 @@ export function QuizCreatePage() {
 
   async function handleDelete(quizId: number) {
     if (selectedClassId === null) return;
-    if (!window.confirm("Xoá quiz này? Hành động không thể hoàn tác.")) return;
+    const ok = await confirm({
+      message: "Xoá quiz này? Hành động không thể hoàn tác.",
+      confirmText: "Xoá",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingActionId(quizId);
     try {
       await quizService.deleteQuiz(quizId);
       await loadQuizzes(selectedClassId);
+      showToast("Đã xoá quiz.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Xoá quiz thất bại. Vui lòng thử lại."));
     } finally {

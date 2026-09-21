@@ -4,6 +4,8 @@ import { isAxiosError } from "axios";
 import { LoadingIndicator } from "../../components/common/LoadingIndicator";
 import { DocumentList } from "../../components/common/DocumentList";
 import { Modal } from "../../components/common/Modal";
+import { useToast } from "../../hooks/useToast";
+import { useConfirm } from "../../hooks/useConfirm";
 import { classService } from "../../services/classService";
 import { scheduleService } from "../../services/scheduleService";
 import type { ClassEntity, LevelType, Schedule } from "../../types/class.types";
@@ -28,6 +30,8 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function StudentClassesPage() {
+  const { showToast } = useToast();
+  const confirm = useConfirm();
   const [myClasses, setMyClasses] = useState<ClassEntity[]>([]);
   const [openClasses, setOpenClasses] = useState<ClassEntity[]>([]);
   const [upcoming, setUpcoming] = useState<Schedule[]>([]);
@@ -66,6 +70,7 @@ export function StudentClassesPage() {
     try {
       await classService.enroll(id);
       await loadData();
+      showToast("Đã đăng ký lớp học thành công.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Đăng ký lớp thất bại. Vui lòng thử lại."));
     } finally {
@@ -74,11 +79,18 @@ export function StudentClassesPage() {
   }
 
   async function handleDrop(id: number) {
+    const ok = await confirm({
+      message: "Huỷ đăng ký lớp học này? Bạn có thể phải đăng ký lại nếu lớp còn chỗ trống.",
+      confirmText: "Huỷ đăng ký",
+      danger: true,
+    });
+    if (!ok) return;
     setActionError(null);
     setPendingActionId(id);
     try {
       await classService.drop(id);
       await loadData();
+      showToast("Đã huỷ đăng ký lớp học.");
     } catch (err) {
       setActionError(getErrorMessage(err, "Huỷ đăng ký thất bại. Vui lòng thử lại."));
     } finally {
