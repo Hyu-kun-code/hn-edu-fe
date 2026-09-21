@@ -17,9 +17,11 @@
   --color-ink: #241f3d;
   --color-ink-soft: #6b6584;
 
-  /* Semantic (state) — intentionally separate from brand accent */
-  --color-success: #0e9f6e;
-  --color-warning: #d97706;
+  /* Semantic (state) — intentionally separate from brand accent.
+     success/warning darkened from #0e9f6e/#d97706 to meet WCAG AA (4.5:1) on --color-surface-muted;
+     originals measured 2.98:1 / 2.80:1. */
+  --color-success: #047857;
+  --color-warning: #a3530a;
   --color-danger: #dc2626;
   --color-info: #2563eb;
 

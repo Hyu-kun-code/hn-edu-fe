@@ -72,6 +72,8 @@
   font-weight: 700;
   font-size: 12.5px;
   padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
@@ -81,6 +83,18 @@
 
 .admin-btn:hover {
   opacity: 0.85;
+}
+
+.admin-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Touchscreens (not just narrow viewports): keep desktop density, enlarge tap area for touch input */
+@media (pointer: coarse) {
+  .admin-btn {
+    min-height: 44px;
+  }
 }
 
 .admin-btn:disabled {

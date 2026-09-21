@@ -67,9 +67,18 @@
   transition: opacity 120ms ease;
 }
 
-.time-picker-field:hover .time-picker-clear-btn {
+.time-picker-field:hover .time-picker-clear-btn,
+.time-picker-field:focus-within .time-picker-clear-btn {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Touchscreens have no hover — keep the clear button reachable there */
+@media (pointer: coarse) {
+  .time-picker-clear-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .time-picker-clear-btn:hover {
