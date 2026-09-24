@@ -1,30 +1,26 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from "../../hooks/useTheme";
+import { useAuth } from "../../hooks/useAuth";
+import { ROLE_HOME_PATH } from "../../utils/constants";
 import "./LandingPage.css";
 
 export function LandingPage() {
-  const [theme, setTheme] = useState<"light" | "dark" | null>(() => {
-    try {
-      return localStorage.getItem("hnedu-theme") as "light" | "dark" | null;
-    } catch {
-      return null;
-    }
-  });
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
   const [submitted, setSubmitted] = useState(false);
+  const { user, isTokenValid, logout } = useAuth();
+  const navigate = useNavigate();
+  const isLoggedIn = Boolean(user) && isTokenValid();
 
-  const isDark = useMemo(() => {
-    if (theme) return theme === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }, [theme]);
-
-  function toggleTheme() {
-    const next = isDark ? "light" : "dark";
-    setTheme(next);
-    try {
-      localStorage.setItem("hnedu-theme", next);
-    } catch {
-      // localStorage unavailable — theme just won't persist
+  function handleAccountClick() {
+    if (user && isTokenValid()) {
+      navigate(ROLE_HOME_PATH[user.role] ?? "/");
+      return;
     }
+    // Token expired while the user was on this page — clear the stale session.
+    logout();
+    navigate("/login");
   }
 
   function handleEnrollSubmit(e: FormEvent<HTMLFormElement>) {
@@ -33,7 +29,7 @@ export function LandingPage() {
   }
 
   return (
-    <div className="landing-page" data-theme={theme ?? undefined}>
+    <div className="landing-page" data-theme={theme}>
       <header>
         <div className="wrap nav">
           <div className="brand">
@@ -69,9 +65,20 @@ export function LandingPage() {
                 </svg>
               )}
             </button>
-            <Link className="btn btn-primary" to="/login" style={{ padding: "10px 20px", fontSize: 14 }}>
-              Đăng nhập
-            </Link>
+            {isLoggedIn && user ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ padding: "10px 20px", fontSize: 14 }}
+                onClick={handleAccountClick}
+              >
+                Xin chào {user.fullName}
+              </button>
+            ) : (
+              <Link className="btn btn-primary" to="/login" style={{ padding: "10px 20px", fontSize: 14 }}>
+                Đăng nhập
+              </Link>
+            )}
           </div>
         </div>
       </header>

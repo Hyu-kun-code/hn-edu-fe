@@ -3,15 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { authService } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
-import { ROLES } from "../../utils/constants";
 import { BrandMark } from "../../components/common/BrandMark";
+import { ROLE_HOME_PATH } from "../../utils/constants";
 import "./LoginPage.css";
-
-const ROLE_HOME_PATH: Record<string, string> = {
-  [ROLES.ADMIN]: "/admin",
-  [ROLES.TUTOR]: "/tutor",
-  [ROLES.STUDENT]: "/student",
-};
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -34,7 +28,10 @@ export function LoginPage() {
       const auth = await authService.login({ username, password });
       login(
         { id: auth.userId, username: auth.username, fullName: auth.fullName, role: auth.role },
-        auth.token
+        auth.token,
+        auth.expiresInMs,
+        auth.refreshToken,
+        auth.refreshExpiresInMs
       );
       navigate(ROLE_HOME_PATH[auth.role] ?? "/", { replace: true });
     } catch (err) {

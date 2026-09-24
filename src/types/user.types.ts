@@ -40,6 +40,8 @@ export interface AuthResponse {
   token: string;
   tokenType: string;
   expiresInMs: number;
+  refreshToken: string;
+  refreshExpiresInMs: number;
   userId: number;
   username: string;
   fullName: string;

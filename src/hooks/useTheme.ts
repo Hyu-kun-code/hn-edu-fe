@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
@@ -18,23 +18,36 @@ function getInitialTheme(): Theme {
   return getSystemTheme();
 }
 
-export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+let currentTheme: Theme = getInitialTheme();
+const listeners = new Set<() => void>();
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+document.documentElement.setAttribute("data-theme", currentTheme);
+
+function setTheme(next: Theme) {
+  currentTheme = next;
+  document.documentElement.setAttribute("data-theme", next);
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+  } catch {
+    // localStorage unavailable — theme just won't persist
+  }
+  listeners.forEach((listener) => listener());
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function getSnapshot() {
+  return currentTheme;
+}
+
+export function useTheme() {
+  const theme = useSyncExternalStore(subscribe, getSnapshot);
 
   function toggleTheme() {
-    setTheme((prev) => {
-      const next: Theme = prev === "dark" ? "light" : "dark";
-      try {
-        localStorage.setItem(STORAGE_KEY, next);
-      } catch {
-        // localStorage unavailable — theme just won't persist
-      }
-      return next;
-    });
+    setTheme(currentTheme === "dark" ? "light" : "dark");
   }
 
   return { theme, toggleTheme };

@@ -18,5 +18,10 @@ export const authService = {
       .post<ApiResponse<RegisterResponse>>("/auth/register", payload)
       .then((res) => res.data.result),
 
+  refresh: (refreshToken: string) =>
+    api
+      .post<ApiResponse<AuthResponse>>("/auth/refresh", { refreshToken })
+      .then((res) => res.data.result),
+
   logout: () => api.post<ApiResponse<void>>("/auth/logout").then((res) => res.data),
 };
